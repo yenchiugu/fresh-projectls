@@ -1,17 +1,41 @@
 // routes/api/google_drive.ts
-import { getSessionAccessToken } from "@deno/kv-oauth";
+import { oauthHelpers } from "../../plugins/kv-oauth.ts";
 import { listGoogleDriveFiles } from "../../utils/google_drive.ts";
 
+// Copyright 2023-2024 the Deno authors. All rights reserved. MIT license.
+const DENO_KV_PATH_KEY = "DENO_KV_PATH";
+let path = undefined;
+if (
+  (await Deno.permissions.query({ name: "env", variable: DENO_KV_PATH_KEY }))
+    .state === "granted"
+) {
+  path = Deno.env.get(DENO_KV_PATH_KEY);
+}
+const kv = await Deno.openKv(path);  
+
+// Gracefully shutdown after tests
+addEventListener("beforeunload", async () => {
+  await kv.close();
+});
+
 export const handler = async (req: Request) => {
-  const sessionId = await getSessionId(req);
-  const accessToken = sessionId ? await getSessionAccessToken(sessionId) : null;
+  const sessionId = await oauthHelpers.getSessionId(req);
+  let accessToken =null;
+  const isSignedIn = sessionId !== undefined;
+  console.log("google_drive start");    
+  
+  if (isSignedIn){
+    const entries = await kv.get([sessionId]);
+    accessToken = entries.value;
+    console.log("google_drive",accessToken.accessToken);    
+  }  
 
   if (!accessToken) {
     return new Response("Unauthorized", { status: 401 });
   }
 
   try {
-    const files = await listGoogleDriveFiles(accessToken);
+    const files = await listGoogleDriveFiles(accessToken.accessToken);
     return new Response(JSON.stringify(files), {
       headers: { "Content-Type": "application/json" },
     });
