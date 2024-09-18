@@ -4,6 +4,8 @@ import { oauthHelpers } from "../plugins/kv-oauth.ts";
 import { FreshContext } from "$fresh/server.ts";
 import GoogleDriveFiles from "../islands/listFiles.tsx";
 
+import * as stereoimg from "npm:stereo-img";
+
 // Copyright 2023-2024 the Deno authors. All rights reserved. MIT license.
 const DENO_KV_PATH_KEY = "DENO_KV_PATH";
 let path = undefined;
@@ -37,6 +39,7 @@ export default async function HomePage(req: Request, ctx: FreshContext) {
 
   return (
     <>
+      <script type="module" src="https://stereo-img.steren.fr/stereo-img.js"></script>
       <h1>Welcome to OAuth Example</h1>
       <p>Provider: Google</p>
       <p>Signed in: {isSignedIn ? "Yes" : "No"}</p>
@@ -52,6 +55,7 @@ export default async function HomePage(req: Request, ctx: FreshContext) {
       )}
 
       <p/>
+      <stereo-img src="kandao-qoocam-ego.jpg"></stereo-img>
       <GoogleDriveFiles/>
     </>
   );
