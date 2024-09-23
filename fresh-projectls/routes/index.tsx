@@ -39,7 +39,7 @@ export default async function HomePage(req: Request, ctx: FreshContext) {
 
   return (
     <>
-      <script type="module" src="https://stereo-img.steren.fr/stereo-img.js"></script>
+      <script type="module" src="stereo-img.js"></script>
       <h1>Welcome to OAuth Example</h1>
       <p>Provider: Google</p>
       <p>Signed in: {isSignedIn ? "Yes" : "No"}</p>
