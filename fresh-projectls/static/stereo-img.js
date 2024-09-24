@@ -301,17 +301,48 @@ class StereoImg extends HTMLElement {
 
     async initialize3DScene() {
       this.scene = new THREE.Scene();
-      this.scene.background = new THREE.Color( 0x101010 );
+      this.scene.background = new THREE.Color( 0xb8b804 );
+      
+
       const light = new THREE.AmbientLight( 0xffffff, 3 );
       light.layers.enable(1);
       light.layers.enable(2);
       this.scene.add( light );
+      //this.scene.add( new THREE.HemisphereLight( 0xcccccc, 0x999999, 3 ) );
+
+      // const light = new THREE.DirectionalLight( 0xffffff, 3 );
+			// light.position.set( 0, 6, 0 );
+			// light.castShadow = true;
+			// light.shadow.camera.top = 2;
+			// light.shadow.camera.bottom = - 2;
+			// light.shadow.camera.right = 2;
+			// light.shadow.camera.left = - 2;
+			// light.shadow.mapSize.set( 4096, 4096 );
+			// this.scene.add( light );
+
+      const geometry = new THREE.PlaneGeometry( 0.1, 0.1 );
+      const material = new THREE.MeshBasicMaterial();
+      const loader = new THREE.TextureLoader();
+      loader.load( 'kandao-qoocam-ego.jpg', 
+      function ( texture ) {    
+
+          // The texture has loaded, so assign it to your material object. In the 
+          // next render cycle, this material update will be shown on the plane 
+          // geometry
+          material.map = texture;
+          material.needsUpdate = true;
+      });
+      //const material = new THREE.MeshBasicMaterial( {color: 0xFF5733, side: THREE.DoubleSide} );
+      let plane = new THREE.Mesh( geometry, material );
+      plane.position.y = 0.4;
+      plane.position.z =   -1.4;
+      this.scene.add( plane );
 
       await this.createEye("left");
       await this.createEye("right");
 
       if(this.wiggle === 'enabled' || !this.wiggle) {
-        this.toggleWiggle(true);
+//        this.toggleWiggle(true);
       }
     }
 
@@ -343,7 +374,7 @@ class StereoImg extends HTMLElement {
         this.style.height = this.clientWidth / aspectRatio + "px";
       }
 
-      this.renderer = new THREE.WebGLRenderer();
+      this.renderer = new THREE.WebGLRenderer({ antialias: true });
       this.renderer.setPixelRatio(window.devicePixelRatio);
       this.renderer.xr.enabled = true;
       this.renderer.setSize(this.clientWidth, this.clientHeight);
@@ -357,14 +388,14 @@ class StereoImg extends HTMLElement {
       this.camera = new THREE.PerspectiveCamera( 70, this.clientWidth / this.clientHeight, 1, 2000 );
       this.camera.layers.enable( 1 );
 
-      const controls = new OrbitControls( this.camera, this.renderer.domElement );
-      this.camera.position.set(0, 0, 0.1);
-      controls.update();
+      //const controls = new OrbitControls( this.camera, this.renderer.domElement );
+   
+      //controls.update();
 
       this.shadowRoot.appendChild(VRButton.createButton(this.renderer));
 
       await this.parseImageAndInitialize3DScene();
-
+      this.camera.position.set(0, 1.7, 0);
       this.animate();
 
       // Listen for component resize
