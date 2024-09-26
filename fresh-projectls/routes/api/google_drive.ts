@@ -1,6 +1,6 @@
 // routes/api/google_drive.ts
 import { oauthHelpers } from "../../plugins/kv-oauth.ts";
-import { listGoogleDriveFiles } from "../../utils/google_drive.ts";
+import { getThumbnails } from "../../utils/google_drive.ts";
 
 // Copyright 2023-2024 the Deno authors. All rights reserved. MIT license.
 const DENO_KV_PATH_KEY = "DENO_KV_PATH";
@@ -35,7 +35,8 @@ export const handler = async (req: Request) => {
   }
 
   try {
-    const files = await listGoogleDriveFiles(accessToken.accessToken);
+    //const files = await listGoogleDriveFiles(accessToken.accessToken);
+    const files = await getThumbnails("13QZJ52MK96Gu7jmEzTDud39drgouiQ4o",accessToken.accessToken);
     return new Response(JSON.stringify(files), {
       headers: { "Content-Type": "application/json" },
     });

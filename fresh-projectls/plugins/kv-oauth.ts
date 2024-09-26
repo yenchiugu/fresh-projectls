@@ -4,8 +4,10 @@ import type { Plugin } from "$fresh/server.ts";
 import type { googleDrive } from "../routes/api/google_drive.ts";
 
 const oauthConfig = createGoogleOAuthConfig({
-    redirectUri: "http://localhost:8000/callback",
-    scope: ["https://www.googleapis.com/auth/userinfo.profile","https://www.googleapis.com/auth/drive.metadata.readonly"],
+    redirectUri: "https://localhost:8000/callback",
+    scope: ["https://www.googleapis.com/auth/userinfo.profile","https://www.googleapis.com/auth/drive.metadata.readonly",
+      "https://www.googleapis.com/auth/drive"
+    ],
   });
 
 const { signIn, handleCallback, signOut, getSessionId } = createHelpers(
