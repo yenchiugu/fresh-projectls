@@ -21,9 +21,13 @@ import exifr from './vendor/exifr/full.esm.js';
 import * as THREE from './vendor/three/three.module.min.js';
 import { VRButton } from './lib/VRButton.js';
 import { OrbitControls  } from './lib/OrbitControls.js';
+import GUI from 'https://cdn.jsdelivr.net/npm/lil-gui@0.19/+esm';
+
+
 
 
 class StereoImg extends HTMLElement {
+  
 
     get type() {
       return this.getAttribute('type');
@@ -100,6 +104,7 @@ class StereoImg extends HTMLElement {
 
     animate() {
       this.renderer.setAnimationLoop( () => {
+        this.pGround.rotation.x = this.pGround_rotate_x;
         this.renderer.render( this.scene, this.camera );
       } );
     }
@@ -308,7 +313,8 @@ class StereoImg extends HTMLElement {
       light.layers.enable(1);
       light.layers.enable(2);
       this.scene.add( light );
-      //this.scene.add( new THREE.HemisphereLight( 0xcccccc, 0x999999, 3 ) );
+
+      this.scene.add( new THREE.HemisphereLight( 0xcccccc, 0x999999, 3 ) );
 
       // const light = new THREE.DirectionalLight( 0xffffff, 3 );
 			// light.position.set( 0, 6, 0 );
@@ -319,6 +325,22 @@ class StereoImg extends HTMLElement {
 			// light.shadow.camera.left = - 2;
 			// light.shadow.mapSize.set( 4096, 4096 );
 			// this.scene.add( light );
+      const plane_geometry = new THREE.PlaneGeometry( 10, 10,10,10 );
+      const plane_material = new THREE.MeshBasicMaterial({color:0x0000ff, wireframe: true});
+      this.pGround = new THREE.Mesh( plane_geometry, plane_material );
+      this.pGround.rotation.x=-0.5*Math.PI;
+
+      this.scene.add(this.pGround);
+
+      const axesHelper = new THREE.AxesHelper(5);
+      this.scene.add(axesHelper);
+
+      const gridHelper = new THREE.GridHelper();
+      this.scene.add(gridHelper);
+
+      const gui = new GUI();
+      gui.add( this, 'pGround_rotate_x',-2,2 );
+      
 
       const geometry = new THREE.PlaneGeometry( 0.1, 0.1 );
       const material = new THREE.MeshBasicMaterial();
@@ -338,8 +360,8 @@ class StereoImg extends HTMLElement {
       plane.position.z =   -1.4;
       this.scene.add( plane );
 
-      await this.createEye("left");
-      await this.createEye("right");
+      //await this.createEye("left");
+      //await this.createEye("right");
 
       if(this.wiggle === 'enabled' || !this.wiggle) {
 //        this.toggleWiggle(true);
@@ -411,7 +433,9 @@ class StereoImg extends HTMLElement {
 
     constructor() {
       super();
+      this.pGround_rotate_x=-0.5*Math.PI;
       this.init();
+      
     }
 
   }

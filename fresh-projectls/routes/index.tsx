@@ -40,6 +40,9 @@ export default async function HomePage(req: Request, ctx: FreshContext) {
   return (
     <>
       <script type="module" src="stereo-img.js"></script>
+      <script type="module">
+      
+      </script>
       <h1>Welcome to OAuth Example</h1>
       <p>Provider: Google</p>
       <p>Signed in: {isSignedIn ? "Yes" : "No"}</p>
